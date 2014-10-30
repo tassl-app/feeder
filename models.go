@@ -21,12 +21,12 @@ func (e *Entry) FormattedPublishedDate() (time.Time, error) {
 }
 
 type Feed struct {
-	FeedUrl     string  `json:"feedUrl"`
-	Title       string  `json:"title"`
-	Link        string  `json:"link"`
-	Description string  `json:"description"`
-	Author      string  `json:"author"`
-	Entries     []Entry `json:"entries"`
+	FeedUrl     string   `json:"feedUrl"`
+	Title       string   `json:"title"`
+	Link        string   `json:"link"`
+	Description string   `json:"description"`
+	Author      string   `json:"author"`
+	Entries     []*Entry `json:"entries"`
 }
 
 type ResponseData struct {

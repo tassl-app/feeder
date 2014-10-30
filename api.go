@@ -2,9 +2,10 @@ package feeder
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 type APIVersion string
@@ -28,13 +29,25 @@ func NewAPI() *API {
 	}
 }
 
-func (a *API) feedLoadEndpoint(feedUrl string) string {
-	return fmt.Sprintf("%s?v=%s&num=%d&q=%s", endpoint, a.Version, a.Number, feedUrl)
+func (a *API) feedLoadEndpoint(feedUrl string) (*url.URL, error) {
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
+	}
+	q := u.Query()
+	q.Set("v", string(a.Version))
+	q.Set("num", strconv.Itoa(int(a.Number)))
+	q.Set("q", feedUrl)
+	u.RawQuery = q.Encode()
+	return u, nil
 }
 
 func (a *API) FeedLoad(feedUrl string) (*FeedResponse, error) {
-	endpoint := a.feedLoadEndpoint(feedUrl)
-	resp, err := http.Get(endpoint)
+	url, err := a.feedLoadEndpoint(feedUrl)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.Get(url.String())
 	if err != nil {
 		return nil, err
 	}
